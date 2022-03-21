@@ -1,3 +1,4 @@
 fastapi~=0.75.0
 redis~=4.1.4
 pydantic~=1.9.0
+requests

@@ -45,11 +45,18 @@ async def visited_domains_get(from_timestamp: int | None = None, to: int | None 
     links = [redis_client.hget('links', timestamp) for timestamp in filtered_timestamps]
     links = list(map(lambda x: x.decode().split('^'), links))
 
+    # Flatting 2D list to 1D list
     flat_links = [link for sublist in links for link in sublist]
-    print(flat_links)
+
+    # Check if each links starts with https://
+    # If not, add it to the link
+    flat_links = list(
+        map(lambda link: link if 'https://' in link or 'http://' in link else 'https://' + link, flat_links)
+    )
 
     # Extract domain from link
-    domains = set([urlparse(link).netloc if urlparse(link).netloc else link for link in flat_links])
+
+    domains = set([urlparse(link).netloc for link in flat_links])
 
     return {'domains': domains,
             'status': 'ok'}
