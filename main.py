@@ -20,6 +20,13 @@ async def startup_event():
     redis_client = Redis(host='localhost', port=6379, db=0)
 
 
+@app.on_event('shutdown')
+async def shutdown_event():
+    logger.info("Closing redis")
+    if redis_client:
+        redis_client.close()
+
+
 @app.post('/visited_links')
 async def visited_links_post(links: PostRequestBodyModel):
     current_unix_time = datetime.datetime.now().timestamp()
