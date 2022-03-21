@@ -39,7 +39,15 @@ async def visited_links_post(links: PostRequestBodyModel):
 
 
 @app.get('/visited_domains')
-async def visited_domains_get():
-    links = redis_client.hget('links', '1647874072')
+async def visited_domains_get(from_timestamp: int | None, to: int | None):
+    from_timestamp = from_timestamp if from_timestamp is not None else 0
+    to = to if to is not None else datetime.datetime(year=3000, day=1, month=1).timestamp()
+
+    all_timestamps = redis_client.hkeys('links')
+    filtered_timestamps = list(filter(lambda x: from_timestamp < int(x) < to, all_timestamps))
+
+    links = [redis_client.hget('links', timestamp) for timestamp in filtered_timestamps]
+
+
     return {'domains': str(links).split('^'),
             'status': 'ok'}
