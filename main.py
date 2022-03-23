@@ -1,5 +1,7 @@
 import datetime
 import logging
+import os
+
 from urllib.parse import urlparse
 
 from redis import Redis
@@ -17,7 +19,8 @@ logger = logging.getLogger(__name__)
 async def startup_event():
     global redis_client
     logger.info("Initializing redis")
-    redis_client = Redis(host='redis', port=6379, db=0)
+    REDIS_HOST, REDIS_PORT = os.getenv('REDIS_HOST', 'redis'), int(os.getenv('REDIS_PORT', 6379))
+    redis_client = Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 
 @app.on_event('shutdown')
