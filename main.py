@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 async def startup_event():
     global redis_client
     logger.info("Initializing redis")
-    redis_client = Redis(host='localhost', port=6379, db=0)
+    redis_client = Redis(host='redis', port=6379, db=0)
 
 
 @app.on_event('shutdown')
