@@ -3,7 +3,9 @@ import time
 from fastapi.testclient import TestClient
 import json
 from main import app
-
+import os
+os.environ['REDIS_HOST'] = 'localhost'
+os.environ['REDIS_PORT'] = '6379'
 
 def test_post_request():
     with TestClient(app) as client:
@@ -26,5 +28,4 @@ def test_data_saves_to_db():
             f'/visited_domains?from_timestamp={current_time - delta_time}&to={current_time + delta_time}')
         assert get_request.status_code == 200
         assert get_request.json()['status'] == 'ok'
-        print(get_request.json()['domains'])
         assert all([domain in get_request.json()['domains'] for domain in ['ya.ru', 'funbox.com', 'go.dev']])
